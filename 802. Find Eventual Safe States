@@ -1,0 +1,36 @@
+class Solution {
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n = graph.size(); // Number of nodes in the graph
+        vector<int> state(n, 0); // 0: unvisited, 1: visiting, 2: safe
+        vector<int> result;
+
+        // Helper function to perform DFS
+        function<bool(int)> isSafe = [&](int node) {
+            if (state[node] != 0) {
+                // If node is already visited, return true if it is safe
+                return state[node] == 2;
+            }
+
+            state[node] = 1; // Mark node as visiting
+            for (int neighbor : graph[node]) {
+                // If a neighbor is unsafe or forms a cycle, the current node is not safe
+                if (state[neighbor] == 1 || !isSafe(neighbor)) {
+                    return false;
+                }
+            }
+
+            state[node] = 2; // Mark node as safe
+            return true;
+        };
+
+        // Check each node and determine if it is safe
+        for (int i = 0; i < n; i++) {
+            if (isSafe(i)) {
+                result.push_back(i); // Add safe node to the result
+            }
+        }
+
+        return result;
+    }
+};
