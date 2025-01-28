@@ -1,0 +1,38 @@
+class Solution {
+public:
+    int findMaxFish(vector<vector<int>>& grid) {
+        int rows = grid.size(), cols = grid[0].size();
+        int maxFish = 0;
+
+        // Helper function to perform DFS and calculate the fish count
+        function<int(int, int)> dfs = [&](int r, int c) {
+            // If out of bounds or on a land cell, return 0
+            if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] == 0) {
+                return 0;
+            }
+
+            // Capture the fish at the current cell
+            int fish = grid[r][c];
+            grid[r][c] = 0; // Mark as visited (set to 0)
+
+            // Explore all four directions
+            fish += dfs(r + 1, c);
+            fish += dfs(r - 1, c);
+            fish += dfs(r, c + 1);
+            fish += dfs(r, c - 1);
+
+            return fish;
+        };
+
+        // Iterate over all cells in the grid
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] > 0) { // Start DFS from each water cell
+                    maxFish = max(maxFish, dfs(i, j));
+                }
+            }
+        }
+
+        return maxFish;
+    }
+};
